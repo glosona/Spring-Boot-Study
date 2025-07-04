@@ -1,20 +1,31 @@
 package com.apiece.springboot_twitter;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 public class PostController {
 
-//    @GetMapping("/posts")
-//    public String getPosts() {
-//        return "안녕하세요.";
-//    }
+    private final Map<Long, Post> posts = new HashMap<>();
+    private final AtomicLong idGenerator = new AtomicLong(1);
 
-    @GetMapping("/posts")
-    public Post getPosts() {
-        return new Post(1L, "안녕하세요.", LocalDateTime.now());
+    @PostMapping("/api/posts")
+    public Post createPost(@RequestBody Post post){
+        long newId = idGenerator.getAndIncrement();
+        Post newPost = new Post(newId, post.content(), LocalDateTime.now());
+
+        posts.put(newId, newPost);
+
+        return newPost;
+    }
+
+    // api/posts/1
+    @GetMapping("/api/posts/{id}")
+    public Post getPost(@PathVariable Long id){
+        return posts.get(id);
     }
 }
