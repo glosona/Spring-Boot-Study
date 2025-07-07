@@ -1,56 +1,54 @@
 package com.apiece.springboot_twitter;
 
+import com.apiece.springboot_twitter.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
+@RequiredArgsConstructor
 @RestController
 public class PostController {
 
-    private final Map<Long, Post> posts = new HashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+    private final PostRepository postRepository;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/posts")
-    public Post createPost(@RequestBody Post post){
-        long newId = idGenerator.getAndIncrement();
-        Post newPost = new Post(newId, post.content(), LocalDateTime.now());
+    public Post createPost(@RequestBody Post post) {
+        Post newPost = new Post(null, post.getContent(), LocalDateTime.now());
 
-        posts.put(newId, newPost);
+        postRepository.save(newPost);
 
         return newPost;
     }
 
     @GetMapping("/api/posts")
     public List<Post> getAllPosts() {
-        return new ArrayList<>(posts.values());
+        return postRepository.findAll();
     }
 
     // api/posts/1
     @GetMapping("/api/posts/{id}")
-    public Post getPost(@PathVariable Long id){
-        return posts.get(id);
+    public Post getPost(@PathVariable Long id) {
+        return postRepository.findById(id)
+                .orElseThrow();
     }
 
     @PutMapping("/api/posts/{id}")
     public Post updatePost(@PathVariable Long id, @RequestBody Post postRequest) {
-        Post post = posts.get(id);
-        Post newPost = post.updateContent(postRequest.content());
-
-        posts.put(id, newPost);
-
-        return newPost;
+        return postRepository.findById(id)
+                .map(post -> {
+                    post.updateContent(postRequest.getContent());
+                    return postRepository.save(post);
+                })
+                .orElseThrow();
     }
 
     @DeleteMapping("/api/posts/{id}")
     public void deletePost(@PathVariable Long id) {
-        posts.remove(id);
+        postRepository.deleteById(id);
     }
 
     // /api/posts/search?page=1&size=3
@@ -59,11 +57,6 @@ public class PostController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "3") int size
     ) {
-        return posts.values()
-                .stream()
-                .sorted((p1, p2) -> Long.compare(p2.id(), p1.id()))
-                .skip((long) page * size)
-                .limit(size)
-                .toList();
+        return postRepository.findAllPaged(page, size);
     }
 }

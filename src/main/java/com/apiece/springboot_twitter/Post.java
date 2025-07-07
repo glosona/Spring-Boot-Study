@@ -1,13 +1,20 @@
 package com.apiece.springboot_twitter;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
-public record Post (
-        Long id,
-        String content,
-        LocalDateTime createdAt
-){
-     public Post updateContent(String content){
-        return new Post(this.id, content, this.createdAt);
-     }
+@Getter
+@Setter
+@AllArgsConstructor
+public class Post {
+    private Long id;
+    private String content;
+    private LocalDateTime createdAt;
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
