@@ -27,7 +27,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("com.mysql:mysql-connector-j")
+	implementation("com.mysql:mysql-connector-j:9.3.0")
 
 //	runtimeOnly("com.h2database:h2")
 
@@ -39,4 +39,8 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.jar {
+	enabled = false
 }
