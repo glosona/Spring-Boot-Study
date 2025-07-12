@@ -5,7 +5,7 @@ plugins {
 	id("io.freefair.lombok") version "8.13.1"
 }
 
-group = "com.apiece"
+group = "com.glosona"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -28,8 +28,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("com.mysql:mysql-connector-j:9.3.0")
-
-//	runtimeOnly("com.h2database:h2")
 
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")

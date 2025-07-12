@@ -1,4 +1,4 @@
-package com.apiece.springboot_twitter;
+package com.glosona.springboot_twitter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
